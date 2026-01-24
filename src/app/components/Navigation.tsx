@@ -1,8 +1,11 @@
-import { Link, useLocation } from 'react-router-dom';
+"use client";
+
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { motion } from 'motion/react';
 
 export function Navigation() {
-  const location = useLocation();
+  const pathname = usePathname();
 
   const links = [
     { path: '/', label: 'Home' },
@@ -15,7 +18,7 @@ export function Navigation() {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
       <div className="max-w-7xl mx-auto px-6 py-6">
         <div className="flex items-center justify-between">
-          <Link to="/" className="text-2xl tracking-wider">
+          <Link href="/" className="text-2xl tracking-wider">
             <span className="font-serif">Tricks Motion</span>
           </Link>
 
@@ -23,11 +26,11 @@ export function Navigation() {
             {links.map((link) => (
               <Link
                 key={link.path}
-                to={link.path}
+                href={link.path}
                 className="relative text-sm tracking-widest hover:text-foreground/70 transition-colors uppercase"
               >
                 {link.label}
-                {location.pathname === link.path && (
+                {pathname === link.path && (
                   <motion.div
                     layoutId="underline"
                     className="absolute -bottom-1 left-0 right-0 h-px bg-foreground"
