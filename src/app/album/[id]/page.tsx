@@ -1,5 +1,6 @@
 import { AlbumDetailPage } from "@/app/pages/AlbumDetailPage";
 
-export default function Page({ params }: { params: { id: string } }) {
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+    await params;
     return <AlbumDetailPage />;
 }
