@@ -3,17 +3,28 @@
 import Link from 'next/link';
 import { motion } from 'motion/react';
 import { ArrowRight } from 'lucide-react';
-import { portfolioImages } from '@/app/data/portfolioData';
+import { usePortfolio } from '@/app/hooks/usePortfolio';
+import { portfolioImages as staticImages } from '@/app/data/portfolioData';
 import { HeroSlider } from '@/app/components/HeroSlider';
 
 export function LandingPage() {
-    const featuredImages = portfolioImages.slice(0, 4);
+    const { images } = usePortfolio();
+    
+    // Separate images by their designated section, gracefully falling back to placeholder images if none are uploaded to the specific section yet
+    const heroImages = images.filter(img => img.site_section === 'Homepage Slider');
+    const displayHero = heroImages.length > 0 ? heroImages.slice(0, 3) : staticImages.slice(0, 3);
+
+    const featuredImages = images.filter(img => img.site_section === 'Homepage Featured');
+    const displayFeatured = featuredImages.length > 0 ? featuredImages : staticImages.slice(0, 4);
+
+    const aboutImages = images.filter(img => img.site_section === 'About Page');
+    const displayAbout = aboutImages.length > 0 ? aboutImages[0] : (staticImages[5] || staticImages[0]);
 
     return (
         <div className="min-h-screen">
             {/* Hero Section */}
             <section className="relative min-h-[100svh] flex items-center justify-center px-4">
-                <HeroSlider images={portfolioImages.slice(0, 5)} />
+                <HeroSlider images={displayHero} />
 
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
@@ -61,7 +72,7 @@ export function LandingPage() {
                     </motion.div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
-                        {featuredImages.map((image, index) => (
+                        {displayFeatured.map((image, index) => (
                             <motion.div
                                 key={image.id}
                                 initial={{ opacity: 0, y: 50 }}
@@ -120,7 +131,7 @@ export function LandingPage() {
                         </div>
                         <div className="aspect-[3/4] overflow-hidden order-1 md:order-2">
                             <img
-                                src={portfolioImages[5].url}
+                                src={displayAbout?.url || ''}
                                 alt="Photographer"
                                 className="w-full h-full object-cover"
                             />

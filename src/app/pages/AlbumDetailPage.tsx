@@ -2,11 +2,13 @@
 
 import { motion } from 'motion/react';
 // import { useParams } from 'react-router-dom';
-import { portfolioImages } from '@/app/data/portfolioData';
+import { usePortfolio } from '@/app/hooks/usePortfolio';
 
 export function AlbumDetailPage() {
     // const { id } = useParams(); // Handled by Next.js page params
-    const albumImages = portfolioImages.filter((img) => img.category === 'Weddings');
+    const { images } = usePortfolio();
+    const displayImages = images.filter(img => img.site_section === 'Portfolio' || !img.site_section);
+    const albumImages = displayImages.filter((img) => img.category === 'Weddings');
 
     return (
         <div className="min-h-screen pt-20 sm:pt-24 lg:pt-32 pb-12 sm:pb-16 lg:pb-20">

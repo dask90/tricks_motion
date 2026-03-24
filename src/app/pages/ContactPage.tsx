@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { motion } from 'motion/react';
 import { Mail, Phone, MapPin, Send } from 'lucide-react';
+import { supabase } from '../../lib/supabase';
 
 export function ContactPage() {
     const [formData, setFormData] = useState({
@@ -13,11 +14,45 @@ export function ContactPage() {
         eventType: '',
         message: '',
     });
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log('Form submitted:', formData);
-        // Handle form submission
+        setIsSubmitting(true);
+        setStatus('idle');
+        
+        try {
+            const { error } = await supabase
+                .from('contacts')
+                .insert([
+                    {
+                        name: formData.name,
+                        email: formData.email,
+                        phone: formData.phone || null,
+                        eventType: formData.eventType,
+                        eventDate: formData.eventDate || null,
+                        message: formData.message,
+                    }
+                ]);
+
+            if (error) throw error;
+            
+            setStatus('success');
+            setFormData({
+                name: '',
+                email: '',
+                phone: '',
+                eventDate: '',
+                eventType: '',
+                message: '',
+            });
+        } catch (error) {
+            console.error('Error submitting form:', error);
+            setStatus('error');
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -216,11 +251,24 @@ export function ContactPage() {
 
                             <button
                                 type="submit"
-                                className="w-full bg-foreground text-background py-3 sm:py-4 hover:bg-foreground/90 transition-all flex items-center justify-center gap-2 group"
+                                disabled={isSubmitting}
+                                className="w-full bg-foreground text-background py-3 sm:py-4 hover:bg-foreground/90 transition-all flex items-center justify-center gap-2 group disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                <span className="tracking-widest uppercase text-xs sm:text-sm">Send Message</span>
-                                <Send className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                                <span className="tracking-widest uppercase text-xs sm:text-sm">
+                                    {isSubmitting ? 'Sending...' : 'Send Message'}
+                                </span>
+                                {!isSubmitting && <Send className="w-4 h-4 group-hover:translate-x-1 transition-transform" />}
                             </button>
+                            {status === 'success' && (
+                                <p className="text-sm text-green-600 mt-4 text-center">
+                                    Thank you! Your message has been sent successfully.
+                                </p>
+                            )}
+                            {status === 'error' && (
+                                <p className="text-sm text-red-600 mt-4 text-center">
+                                    Something went wrong. Please try again later.
+                                </p>
+                            )}
                         </form>
 
                         <p className="text-xs sm:text-sm text-muted-foreground mt-4 sm:mt-6 text-center">

@@ -1,9 +1,14 @@
 "use client";
 
 import { motion } from 'motion/react';
-import { portfolioImages } from '@/app/data/portfolioData';
+import { usePortfolio } from '@/app/hooks/usePortfolio';
+import { portfolioImages as staticImages } from '@/app/data/portfolioData';
 
 export function AboutPage() {
+    const { images } = usePortfolio();
+    const aboutImages = images.filter(img => img.site_section === 'About Page');
+    const aboutImage = aboutImages.length > 0 ? aboutImages[0] : (staticImages[5] || staticImages[0]);
+
     return (
         <div className="min-h-screen pt-20 sm:pt-24 lg:pt-32 pb-12 sm:pb-16 lg:pb-20 px-4 sm:px-6">
             <div className="max-w-6xl mx-auto">
@@ -15,7 +20,7 @@ export function AboutPage() {
                 >
                     <div className="aspect-[3/4] overflow-hidden order-2 md:order-1">
                         <img
-                            src={portfolioImages[5].url}
+                            src={aboutImage?.url || ''}
                             alt="Photographer Portrait"
                             className="w-full h-full object-cover"
                         />

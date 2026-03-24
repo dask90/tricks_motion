@@ -4,6 +4,7 @@ export interface PortfolioImage {
   title: string;
   category: 'Weddings' | 'Graduations' | 'Events' | 'Birthdays' | 'Parties' | 'Funerals';
   description?: string;
+  site_section?: string;
 }
 
 export const portfolioImages: PortfolioImage[] = [
