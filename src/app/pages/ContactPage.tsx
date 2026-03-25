@@ -21,7 +21,7 @@ export function ContactPage() {
         e.preventDefault();
         setIsSubmitting(true);
         setStatus('idle');
-        
+
         try {
             const { error } = await supabase
                 .from('contacts')
@@ -37,7 +37,7 @@ export function ContactPage() {
                 ]);
 
             if (error) throw error;
-            
+
             setStatus('success');
             setFormData({
                 name: '',
@@ -102,10 +102,10 @@ export function ContactPage() {
                                         Email
                                     </div>
                                     <a
-                                        href="mailto:hello@lensandlight.com"
+                                        href="mailto:dasokwa90@gmail.com"
                                         className="text-sm sm:text-base hover:text-muted-foreground transition-colors break-all"
                                     >
-                                        hello@lensandlight.com
+                                        dasokwa90@gmail.com
                                     </a>
                                 </div>
                             </div>
@@ -117,10 +117,10 @@ export function ContactPage() {
                                         Phone
                                     </div>
                                     <a
-                                        href="tel:+15551234567"
+                                        href="tel:+2330593666780"
                                         className="text-sm sm:text-base hover:text-muted-foreground transition-colors"
                                     >
-                                        +1 (555) 123-4567
+                                        +233 (059) 366 6780
                                     </a>
                                 </div>
                             </div>
@@ -131,8 +131,8 @@ export function ContactPage() {
                                     <div className="text-xs sm:text-sm text-muted-foreground mb-1 tracking-wider uppercase">
                                         Location
                                     </div>
-                                    <p className="text-sm sm:text-base">Los Angeles, California</p>
-                                    <p className="text-xs sm:text-sm text-muted-foreground mt-1">Available for travel worldwide</p>
+                                    <p className="text-sm sm:text-base">Kumasi, Ashanti Region</p>
+                                    <p className="text-xs sm:text-sm text-muted-foreground mt-1">Available for travel </p>
                                 </div>
                             </div>
                         </div>
@@ -142,7 +142,7 @@ export function ContactPage() {
                             <div className="space-y-2 text-muted-foreground text-sm sm:text-base">
                                 <p>Monday - Friday: 9:00 AM - 6:00 PM</p>
                                 <p>Saturday: By appointment</p>
-                                <p>Sunday: Closed</p>
+                                <p>Sunday: By appointment</p>
                             </div>
                         </div>
                     </motion.div>

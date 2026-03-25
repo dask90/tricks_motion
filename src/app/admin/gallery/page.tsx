@@ -30,6 +30,19 @@ export default function GalleryAdminPage() {
     // View state
     const [activeTab, setActiveTab] = useState('Portfolio');
 
+    // Drag state
+    const [draggedItemIdx, setDraggedItemIdx] = useState<number | null>(null);
+    const [dragOverItemIdx, setDragOverItemIdx] = useState<number | null>(null);
+
+    // Edit state
+    const [editingImage, setEditingImage] = useState<PortfolioImage | null>(null);
+    const [editFiles, setEditFiles] = useState<FileList | null>(null);
+    const [editTitle, setEditTitle] = useState('');
+    const [editSection, setEditSection] = useState('');
+    const [editCategory, setEditCategory] = useState('');
+    const [editDescription, setEditDescription] = useState('');
+    const [savingEdit, setSavingEdit] = useState(false);
+
     useEffect(() => {
         const checkAuthAndFetch = async () => {
             const { data: { session } } = await supabase.auth.getSession();
@@ -52,8 +65,15 @@ export default function GalleryAdminPage() {
 
             if (error) throw error;
             setImages(data || []);
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error fetching images:', error);
+            if (error?.message) console.error('Details:', error.message);
+            Swal.fire({
+                icon: 'error',
+                title: 'Connection Error',
+                text: 'Could not fetch images. Please check your network connection.',
+                confirmButtonColor: '#000000',
+            });
         } finally {
             setLoading(false);
         }
@@ -193,6 +213,152 @@ export default function GalleryAdminPage() {
         }
     };
 
+    const handleEditClick = (img: PortfolioImage) => {
+        setEditingImage(img);
+        setEditTitle(img.title);
+        setEditSection(img.site_section || 'Portfolio');
+        setEditCategory(img.category);
+        setEditDescription(img.description || '');
+        setEditFiles(null);
+    };
+
+    const handleEditSave = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!editingImage || !editTitle) return;
+
+        setSavingEdit(true);
+        try {
+            let finalUrl = editingImage.url;
+
+            if (editFiles && editFiles.length > 0) {
+                const file = editFiles[0];
+                const fileExt = file.name.split('.').pop();
+                const fileName = `${Math.random().toString(36).substring(2, 15)}_${Date.now()}.${fileExt}`;
+                const filePath = `images/${fileName}`;
+
+                const { error: uploadError } = await supabase.storage
+                    .from('portfolio')
+                    .upload(filePath, file);
+
+                if (uploadError) throw uploadError;
+
+                const { data: { publicUrl } } = supabase.storage
+                    .from('portfolio')
+                    .getPublicUrl(filePath);
+                
+                finalUrl = publicUrl;
+
+                const urlParts = editingImage.url.split('/portfolio/');
+                let oldFilePath = '';
+                if (urlParts.length > 1) {
+                    oldFilePath = urlParts[1];
+                } else {
+                    const oldName = editingImage.url.split('/').pop();
+                    if (oldName) oldFilePath = `images/${oldName}`;
+                }
+                if (oldFilePath) {
+                    await supabase.storage.from('portfolio').remove([oldFilePath]);
+                }
+            }
+
+            const { data: updatedData, error: dbError } = await supabase
+                .from('portfolio_images')
+                .update({
+                    title: editTitle,
+                    category: editCategory,
+                    site_section: editSection,
+                    description: editDescription || null,
+                    url: finalUrl
+                })
+                .eq('id', editingImage.id)
+                .select();
+
+            if (dbError) throw dbError;
+            if (!updatedData || updatedData.length === 0) {
+                throw new Error("Missing UPDATE permissions! Please go to your Supabase Dashboard -> Authentication -> Policies, and enable the 'UPDATE' policy for the 'portfolio_images' table.");
+            }
+
+            setEditingImage(null);
+            fetchImages();
+            Swal.fire({ icon: 'success', title: 'Saved!', text: 'Changes saved successfully.', confirmButtonColor: '#000000', timer: 1500, showConfirmButton: false });
+        } catch (error: any) {
+            console.error('Error saving:', error);
+            Swal.fire({ icon: 'error', title: 'Save Failed', text: error.message, confirmButtonColor: '#000000' });
+        } finally {
+            setSavingEdit(false);
+        }
+    };
+
+    const handleDragStart = (e: React.DragEvent, index: number) => {
+        setDraggedItemIdx(index);
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', index.toString());
+    };
+
+    const handleDragOver = (e: React.DragEvent, index: number) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        if (dragOverItemIdx !== index) {
+            setDragOverItemIdx(index);
+        }
+    };
+
+    const handleDrop = async (e: React.DragEvent, dropIndex: number) => {
+        e.preventDefault();
+        setDragOverItemIdx(null);
+        
+        if (activeTab !== 'Homepage Featured') return;
+        if (draggedItemIdx === null || draggedItemIdx === dropIndex) return;
+
+        const items = [...filteredViewImages];
+        const draggedItem = items[draggedItemIdx];
+        
+        items.splice(draggedItemIdx, 1);
+        items.splice(dropIndex, 0, draggedItem);
+
+        const now = Date.now();
+        const updates = items.map((item, idx) => ({
+            id: item.id,
+            created_at: new Date(now - idx * 1000).toISOString()
+        }));
+
+        setImages(prev => {
+            const newImages = [...prev];
+            updates.forEach(update => {
+                const index = newImages.findIndex(img => img.id === update.id);
+                if (index !== -1) {
+                    newImages[index] = { ...newImages[index], created_at: update.created_at };
+                }
+            });
+            return newImages.sort((a,b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+        });
+
+        try {
+            const updatePromises = updates.map(u => 
+                supabase.from('portfolio_images')
+                .update({ created_at: u.created_at })
+                .eq('id', u.id)
+                .select()
+            );
+            
+            const results = await Promise.all(updatePromises);
+            const errs = results.filter(r => r.error);
+            const emptyUpdates = results.filter(r => !r.error && (!r.data || r.data.length === 0));
+            
+            if (errs.length > 0) throw errs[0].error;
+            if (emptyUpdates.length > 0) {
+                throw new Error("Missing UPDATE permissions! Please go to your Supabase Dashboard and add an 'UPDATE' policy for the 'portfolio_images' table.");
+            }
+        } catch (error: any) {
+            console.error('Reorder error:', error);
+            if (error?.message) console.error('Details:', error.message);
+            fetchImages();
+            Swal.fire({ icon: 'error', title: 'Reorder Failed', text: 'Could not save the new order.', confirmButtonColor: '#000000' });
+        }
+        
+        setDraggedItemIdx(null);
+    };
+
     if (loading && images.length === 0) {
         return <div className="p-8 text-center text-muted-foreground">Loading gallery...</div>;
     }
@@ -305,29 +471,50 @@ export default function GalleryAdminPage() {
                         </div>
                     ) : (
                         <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
-                            {filteredViewImages.map(img => (
-                                <div key={img.id} className="bg-card border border-border rounded-xl overflow-hidden flex flex-col group">
+                            {filteredViewImages.map((img, index) => (
+                                <div 
+                                    key={img.id} 
+                                    draggable={activeTab === 'Homepage Featured'}
+                                    onDragStart={(e) => handleDragStart(e, index)}
+                                    onDragOver={(e) => handleDragOver(e, index)}
+                                    onDrop={(e) => handleDrop(e, index)}
+                                    onDragEnd={() => setDragOverItemIdx(null)}
+                                    className={`bg-card border border-border rounded-xl overflow-hidden flex flex-col group transition-all ${activeTab === 'Homepage Featured' ? 'cursor-move' : ''} ${dragOverItemIdx === index ? 'border-foreground border-2 scale-105 opacity-80' : ''} ${draggedItemIdx === index ? 'opacity-50' : ''}`}
+                                >
                                     <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted">
                                         <img 
                                             src={img.url} 
                                             alt={img.title}
                                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                                         />
-                                        <div className="absolute top-2 right-2">
-                                            <span className="bg-background/80 backdrop-blur-sm text-foreground text-[10px] px-2 py-1 rounded-md uppercase tracking-wider font-medium">
+                                        <div className="absolute top-2 right-2 flex flex-col items-end gap-1">
+                                            <span className="bg-background/80 backdrop-blur-sm text-foreground text-[10px] px-2 py-1 rounded-md uppercase tracking-wider font-medium shadow-sm">
                                                 {img.category}
                                             </span>
+                                            {activeTab === 'Homepage Featured' && (
+                                                <span className="bg-foreground text-background text-[10px] px-2 py-1 rounded-md uppercase tracking-wider font-medium shadow-sm flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                    Drag to Reorder
+                                                </span>
+                                            )}
                                         </div>
                                     </div>
                                     <div className="p-4 flex flex-col flex-1">
                                         <div className="flex justify-between items-start gap-2 mb-2">
                                             <h3 className="font-medium truncate" title={img.title}>{img.title}</h3>
-                                            <button 
-                                                onClick={() => handleDelete(img.id, img.url)}
-                                                className="text-red-500 hover:text-red-600 text-[10px] uppercase tracking-wider shrink-0"
-                                            >
-                                                Delete
-                                            </button>
+                                            <div className="flex items-center gap-3 shrink-0">
+                                                <button 
+                                                    onClick={() => handleEditClick(img)}
+                                                    className="text-blue-500 hover:text-blue-600 text-[10px] uppercase tracking-wider"
+                                                >
+                                                    Edit
+                                                </button>
+                                                <button 
+                                                    onClick={() => handleDelete(img.id, img.url)}
+                                                    className="text-red-500 hover:text-red-600 text-[10px] uppercase tracking-wider"
+                                                >
+                                                    Delete
+                                                </button>
+                                            </div>
                                         </div>
                                         {img.description && (
                                             <p className="text-xs text-muted-foreground line-clamp-2 mt-auto">
@@ -345,6 +532,100 @@ export default function GalleryAdminPage() {
                 </div>
 
             </div>
+
+            {/* Edit Modal */}
+            {editingImage && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm">
+                    <div className="bg-card w-full max-w-md rounded-xl border border-border p-6 shadow-xl max-h-[90vh] overflow-y-auto">
+                        <div className="flex justify-between items-center mb-6">
+                            <h2 className="text-xl font-medium">Edit Image Details</h2>
+                            <button onClick={() => setEditingImage(null)} className="text-muted-foreground hover:text-foreground text-xl">
+                                ✕
+                            </button>
+                        </div>
+                        
+                        <form onSubmit={handleEditSave} className="space-y-4">
+                            <div>
+                                <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-2">Update Image File (Optional)</label>
+                                <input 
+                                    type="file" 
+                                    accept="image/*"
+                                    onChange={(e) => setEditFiles(e.target.files)}
+                                    className="w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:bg-muted file:text-foreground hover:file:bg-muted/80 cursor-pointer"
+                                />
+                                <p className="text-[10px] text-muted-foreground mt-1 tracking-wide">Leave blank to keep the current image.</p>
+                            </div>
+                            
+                            <div>
+                                <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-2">Title *</label>
+                                <input 
+                                    type="text" 
+                                    value={editTitle}
+                                    onChange={(e) => setEditTitle(e.target.value)}
+                                    className="w-full bg-input border border-border px-4 py-2 outline-none focus:border-foreground/40 transition-colors text-sm"
+                                    required
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-2">Section *</label>
+                                <select 
+                                    value={editSection}
+                                    onChange={(e) => setEditSection(e.target.value)}
+                                    className="w-full bg-input border border-border px-4 py-2 outline-none focus:border-foreground/40 transition-colors text-sm"
+                                    required
+                                >
+                                    <option value="Portfolio">Main Portfolio Grid</option>
+                                    <option value="Homepage Slider">Homepage Top Slider</option>
+                                    <option value="Homepage Featured">Homepage Featured Grid</option>
+                                    <option value="About Page">About Page Portrait</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-2">Category *</label>
+                                <select 
+                                    value={editCategory}
+                                    onChange={(e) => setEditCategory(e.target.value)}
+                                    className="w-full bg-input border border-border px-4 py-2 outline-none focus:border-foreground/40 transition-colors text-sm capitalize"
+                                    required
+                                >
+                                    {categories.filter(c => c !== 'All').map(c => (
+                                        <option key={c} value={c}>{c}</option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div>
+                                <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-2">Description</label>
+                                <textarea 
+                                    value={editDescription}
+                                    onChange={(e) => setEditDescription(e.target.value)}
+                                    className="w-full bg-input border border-border px-4 py-2 outline-none focus:border-foreground/40 transition-colors text-sm resize-none"
+                                    rows={3}
+                                />
+                            </div>
+
+                            <div className="flex gap-3 mt-8">
+                                <button 
+                                    type="button"
+                                    onClick={() => setEditingImage(null)}
+                                    className="flex-1 border border-border py-3 hover:bg-muted transition-colors tracking-widest uppercase text-xs"
+                                >
+                                    Cancel
+                                </button>
+                                <button 
+                                    type="submit"
+                                    disabled={savingEdit || !editTitle}
+                                    className="flex-1 bg-foreground text-background py-3 hover:bg-foreground/90 transition-colors disabled:opacity-50 tracking-widest uppercase text-xs"
+                                >
+                                    {savingEdit ? 'Saving...' : 'Save Changes'}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

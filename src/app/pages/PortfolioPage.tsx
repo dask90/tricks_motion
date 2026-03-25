@@ -3,16 +3,16 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
-import { categories, portfolioImages as staticImages } from '@/app/data/portfolioData';
+import { categories } from '@/app/data/portfolioData';
 import { usePortfolio } from '@/app/hooks/usePortfolio';
 
 export function PortfolioPage() {
     const [selectedCategory, setSelectedCategory] = useState<string>('All');
     const { images } = usePortfolio();
     
-    // Only show images assigned to the overall Portfolio grid, gracefully fallback to default placeholders if none are explicitly assigned
+    // Only show images assigned to the overall Portfolio grid
     const portfolioSectionImages = images.filter(img => img.site_section === 'Portfolio');
-    const displayImages = portfolioSectionImages.length > 0 ? portfolioSectionImages : staticImages;
+    const displayImages = portfolioSectionImages;
 
     const [selectedImage, setSelectedImage] = useState<typeof displayImages[0] | null>(null);
 
@@ -76,7 +76,7 @@ export function PortfolioPage() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.3 }}
-                    className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6"
+                    className="columns-2 sm:columns-3 lg:columns-3 gap-2 sm:gap-6 space-y-2 sm:space-y-6"
                 >
                     {filteredImages.map((image, index) => (
                         <motion.div

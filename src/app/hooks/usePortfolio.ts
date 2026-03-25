@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
-import { PortfolioImage, portfolioImages as staticImages } from '../data/portfolioData';
+import { PortfolioImage } from '../data/portfolioData';
 
 export function usePortfolio() {
-    const [images, setImages] = useState<PortfolioImage[]>(staticImages);
+    const [images, setImages] = useState<PortfolioImage[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {

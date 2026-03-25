@@ -2,12 +2,11 @@
 
 import { motion } from 'motion/react';
 import { usePortfolio } from '@/app/hooks/usePortfolio';
-import { portfolioImages as staticImages } from '@/app/data/portfolioData';
 
 export function AboutPage() {
     const { images } = usePortfolio();
     const aboutImages = images.filter(img => img.site_section === 'About Page');
-    const aboutImage = aboutImages.length > 0 ? aboutImages[0] : (staticImages[5] || staticImages[0]);
+    const aboutImage = aboutImages.length > 0 ? aboutImages[0] : null;
 
     return (
         <div className="min-h-screen pt-20 sm:pt-24 lg:pt-32 pb-12 sm:pb-16 lg:pb-20 px-4 sm:px-6">
@@ -18,12 +17,14 @@ export function AboutPage() {
                     animate={{ opacity: 1, y: 0 }}
                     className="grid md:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-center mb-20 sm:mb-28 lg:mb-32"
                 >
-                    <div className="aspect-[3/4] overflow-hidden order-2 md:order-1">
-                        <img
-                            src={aboutImage?.url || ''}
-                            alt="Photographer Portrait"
-                            className="w-full h-full object-cover"
-                        />
+                    <div className="aspect-[3/4] overflow-hidden order-2 md:order-1 bg-muted">
+                        {aboutImage && (
+                            <img
+                                src={aboutImage.url}
+                                alt="Photographer Portrait"
+                                className="w-full h-full object-cover"
+                            />
+                        )}
                     </div>
                     <div className="order-1 md:order-2">
                         <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl mb-6 sm:mb-8">About Me</h1>

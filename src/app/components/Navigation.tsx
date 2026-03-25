@@ -33,7 +33,8 @@ export function Navigation() {
   }, [pathname]);
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
+    <>
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
       <div className="max-w-7xl mx-auto px-6 py-4 sm:py-6">
         <div className="flex items-center justify-between">
           <Link href="/" className="text-xl sm:text-2xl tracking-wider z-50 relative">
@@ -74,6 +75,7 @@ export function Navigation() {
           </div>
         </div>
       </div>
+    </nav>
 
       {/* Mobile Navigation Overlay */}
       <AnimatePresence>
@@ -83,7 +85,7 @@ export function Navigation() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-40 bg-background md:hidden pt-24 px-6 flex flex-col items-center gap-8"
+            className="fixed inset-0 z-40 bg-background/95 backdrop-blur-xl md:hidden pt-32 px-6 flex flex-col items-center gap-8"
           >
             {links.map((link) => (
               <Link
@@ -97,6 +99,6 @@ export function Navigation() {
           </motion.div>
         )}
       </AnimatePresence>
-    </nav>
+    </>
   );
 }

@@ -4,21 +4,20 @@ import Link from 'next/link';
 import { motion } from 'motion/react';
 import { ArrowRight } from 'lucide-react';
 import { usePortfolio } from '@/app/hooks/usePortfolio';
-import { portfolioImages as staticImages } from '@/app/data/portfolioData';
 import { HeroSlider } from '@/app/components/HeroSlider';
 
 export function LandingPage() {
     const { images } = usePortfolio();
     
-    // Separate images by their designated section, gracefully falling back to placeholder images if none are uploaded to the specific section yet
+    // Separate images by their designated section
     const heroImages = images.filter(img => img.site_section === 'Homepage Slider');
-    const displayHero = heroImages.length > 0 ? heroImages.slice(0, 3) : staticImages.slice(0, 3);
+    const displayHero = heroImages.slice(0, 3);
 
     const featuredImages = images.filter(img => img.site_section === 'Homepage Featured');
-    const displayFeatured = featuredImages.length > 0 ? featuredImages : staticImages.slice(0, 4);
+    const displayFeatured = featuredImages.slice(0, 4);
 
     const aboutImages = images.filter(img => img.site_section === 'About Page');
-    const displayAbout = aboutImages.length > 0 ? aboutImages[0] : (staticImages[5] || staticImages[0]);
+    const displayAbout = aboutImages.length > 0 ? aboutImages[0] : null;
 
     return (
         <div className="min-h-screen">
@@ -32,22 +31,22 @@ export function LandingPage() {
                     transition={{ duration: 1, ease: 'easeOut' }}
                     className="relative z-10 text-center px-4 w-full"
                 >
-                    <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl mb-4 sm:mb-6 tracking-tight leading-tight">
+                    <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl mb-4 sm:mb-6 tracking-tight leading-tight text-white drop-shadow-lg">
                         Lens & Light
                     </h1>
-                    <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted-foreground mb-8 sm:mb-12 tracking-wide max-w-2xl mx-auto px-4">
+                    <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/90 mb-8 sm:mb-12 tracking-wide max-w-2xl mx-auto px-4 drop-shadow-md">
                         Capturing the extraordinary in the everyday
                     </p>
 
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
                         <Link href="/portfolio" className="w-full sm:w-auto">
-                            <button className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 bg-foreground text-background hover:bg-foreground/90 transition-all flex items-center justify-center gap-2 group">
+                            <button className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 bg-white text-black hover:bg-white/90 transition-all flex items-center justify-center gap-2 group">
                                 <span className="tracking-widest uppercase text-xs sm:text-sm">View Work</span>
                                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                             </button>
                         </Link>
                         <Link href="/contact" className="w-full sm:w-auto">
-                            <button className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 border border-foreground/20 hover:border-foreground/40 transition-all">
+                            <button className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 border border-white/30 hover:border-white/50 text-white transition-all bg-black/20 hover:bg-black/40 backdrop-blur-sm">
                                 <span className="tracking-widest uppercase text-xs sm:text-sm">Book a Session</span>
                             </button>
                         </Link>
@@ -75,10 +74,10 @@ export function LandingPage() {
                         {displayFeatured.map((image, index) => (
                             <motion.div
                                 key={image.id}
-                                initial={{ opacity: 0, y: 50 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ duration: 0.6, delay: index * 0.1 }}
+                                initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
+                                whileInView={{ opacity: 1, x: 0 }}
+                                viewport={{ once: true, margin: "-50px" }}
+                                transition={{ duration: 0.8, ease: "easeOut", delay: 0.1 }}
                             >
                                 <Link href="/portfolio" className="group block">
                                     <div className="relative aspect-[4/5] overflow-hidden mb-3 sm:mb-4">
@@ -129,12 +128,14 @@ export function LandingPage() {
                                 </button>
                             </Link>
                         </div>
-                        <div className="aspect-[3/4] overflow-hidden order-1 md:order-2">
-                            <img
-                                src={displayAbout?.url || ''}
-                                alt="Photographer"
-                                className="w-full h-full object-cover"
-                            />
+                        <div className="aspect-[3/4] overflow-hidden order-1 md:order-2 bg-muted">
+                            {displayAbout && (
+                                <img
+                                    src={displayAbout.url}
+                                    alt="Photographer"
+                                    className="w-full h-full object-cover"
+                                />
+                            )}
                         </div>
                     </motion.div>
                 </div>

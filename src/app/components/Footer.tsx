@@ -32,7 +32,7 @@ export function Footer() {
               <Twitter className="size-5" />
             </a>
             <a
-              href="mailto:contact@tricksmotion.com"
+              href="mailto:dasokwa90@gmail.com"
               className="hover:text-muted-foreground transition-colors"
               aria-label="Email"
             >
