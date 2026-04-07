@@ -2,11 +2,17 @@ export interface PortfolioImage {
   id: string;
   url: string;
   title: string;
-  category: 'Weddings' | 'Graduations' | 'Events' | 'Birthdays' | 'Parties' | 'Funerals';
+  category: string;
   description?: string;
   site_section?: string;
 }
 
+export interface CategoryMetadata {
+  title: string;
+  heroImage: string;
+  subtitle: string;
+  description: string;
+}
 
-
-export const categories = ['All', 'Weddings', 'Graduations', 'Events', 'Birthdays', 'Parties', 'Funerals'] as const;
+// These are now dynamic in Supabase. 
+// Use usePortfolio() hook in client components.

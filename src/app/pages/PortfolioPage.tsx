@@ -3,12 +3,12 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
-import { categories } from '@/app/data/portfolioData';
+import Link from 'next/link';
 import { usePortfolio } from '@/app/hooks/usePortfolio';
 
 export function PortfolioPage() {
     const [selectedCategory, setSelectedCategory] = useState<string>('All');
-    const { images } = usePortfolio();
+    const { images, categories: dynamicCategories, loading } = usePortfolio();
     
     // Only show images assigned to the overall Portfolio grid
     const portfolioSectionImages = images.filter(img => img.site_section === 'Portfolio');
@@ -35,6 +35,14 @@ export function PortfolioPage() {
         if (index < filteredImages.length - 1) setSelectedImage(filteredImages[index + 1]);
     };
 
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-black">
+                <div className="w-12 h-12 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+            </div>
+        );
+    }
+
     return (
         <div className="min-h-screen pt-20 sm:pt-24 lg:pt-32 pb-12 sm:pb-16 lg:pb-20 px-4 sm:px-6">
             <div className="max-w-7xl mx-auto">
@@ -57,17 +65,27 @@ export function PortfolioPage() {
                     transition={{ delay: 0.2 }}
                     className="flex flex-wrap gap-2 sm:gap-4 mb-12 sm:mb-16"
                 >
-                    {categories.map((category) => (
-                        <button
-                            key={category}
-                            onClick={() => setSelectedCategory(category)}
-                            className={`px-4 sm:px-6 py-2 sm:py-3 tracking-widest uppercase text-xs sm:text-sm transition-all ${selectedCategory === category
-                                ? 'bg-foreground text-background'
-                                : 'border border-foreground/20 hover:border-foreground/40'
-                                }`}
-                        >
-                            {category}
-                        </button>
+                    {dynamicCategories.map((category) => (
+                        category === 'All' ? (
+                            <button
+                                key={category}
+                                onClick={() => setSelectedCategory(category)}
+                                className={`px-4 sm:px-6 py-2 sm:py-3 tracking-widest uppercase text-xs sm:text-sm transition-all ${selectedCategory === category
+                                    ? 'bg-foreground text-background'
+                                    : 'border border-foreground/20 hover:border-foreground/40'
+                                    }`}
+                            >
+                                {category}
+                            </button>
+                        ) : (
+                            <Link
+                                key={category}
+                                href={`/portfolio/${category}`}
+                                className={`px-4 sm:px-6 py-2 sm:py-3 tracking-widest uppercase text-xs sm:text-sm transition-all border border-foreground/20 hover:border-foreground/40 hover:bg-foreground/5`}
+                            >
+                                {category}
+                            </Link>
+                        )
                     ))}
                 </motion.div>
 
@@ -76,7 +94,7 @@ export function PortfolioPage() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.3 }}
-                    className="columns-2 sm:columns-3 lg:columns-3 gap-2 sm:gap-6 space-y-2 sm:space-y-6"
+                    className="columns-2 sm:columns-3 lg:columns-3 gap-1"
                 >
                     {filteredImages.map((image, index) => (
                         <motion.div
@@ -85,7 +103,7 @@ export function PortfolioPage() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: index * 0.05 }}
                             onClick={() => setSelectedImage(image)}
-                            className="break-inside-avoid group cursor-pointer relative overflow-hidden mb-6 rounded-md shadow-sm border border-border/50 bg-muted/20"
+                            className="break-inside-avoid group cursor-pointer relative overflow-hidden mb-1 rounded-md shadow-sm border border-border/50 bg-muted/20"
                         >
                                 <img
                                     src={image.url}

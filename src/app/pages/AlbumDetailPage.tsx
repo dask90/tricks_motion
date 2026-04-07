@@ -26,8 +26,6 @@ export function AlbumDetailPage() {
                     <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-8 text-xs sm:text-sm text-muted-foreground">
                         <span>Location: California</span>
                         <span className="hidden sm:inline">•</span>
-                        <span>Date: June 2025</span>
-                        <span className="hidden sm:inline">•</span>
                         <span>Category: Wedding</span>
                     </div>
                 </motion.div>

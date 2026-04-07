@@ -1,42 +1,69 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
-import { PortfolioImage } from '../data/portfolioData';
+import { PortfolioImage, CategoryMetadata } from '../data/portfolioData';
 
 export function usePortfolio() {
     const [images, setImages] = useState<PortfolioImage[]>([]);
+    const [categories, setCategories] = useState<string[]>([]);
+    const [categoryMetadata, setCategoryMetadata] = useState<Record<string, CategoryMetadata>>({});
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchImages = async () => {
+        const fetchPortfolioData = async () => {
             try {
-                const { data, error } = await supabase
-                    .from('portfolio_images')
-                    .select('*')
-                    .order('created_at', { ascending: false });
+                // Fetch images and categories in parallel
+                const [imagesRes, categoriesRes] = await Promise.all([
+                    supabase
+                        .from('portfolio_images')
+                        .select('*')
+                        .order('created_at', { ascending: false }),
+                    supabase
+                        .from('portfolio_categories')
+                        .select('*')
+                        .order('name', { ascending: true })
+                ]);
 
-                if (error) throw error;
-                
-                if (data && data.length > 0) {
-                    // Map database columns to the PortfolioImage interface shape
-                    const mappedData: PortfolioImage[] = data.map((item: any) => ({
+                if (imagesRes.error) throw imagesRes.error;
+                if (categoriesRes.error) throw categoriesRes.error;
+
+                // 1. Process Images
+                if (imagesRes.data) {
+                    const mappedImages: PortfolioImage[] = imagesRes.data.map((item: any) => ({
                         id: item.id,
                         url: item.url,
                         title: item.title,
-                        category: item.category as any, // Cast to match string literal union
+                        category: item.category as any,
                         description: item.description || undefined,
                         site_section: item.site_section || 'Portfolio'
                     }));
-                    setImages(mappedData);
+                    setImages(mappedImages);
+                }
+
+                // 2. Process Categories
+                if (categoriesRes.data) {
+                    const dynamicCategories = ['All', ...categoriesRes.data.map((c: any) => c.name)];
+                    setCategories(dynamicCategories);
+
+                    const metadataMap: Record<string, CategoryMetadata> = {};
+                    categoriesRes.data.forEach((c: any) => {
+                        metadataMap[c.name] = {
+                            title: c.name,
+                            heroImage: c.hero_image || '',
+                            subtitle: (c as any).subtitle || '',
+                            description: c.description || ''
+                        };
+                    });
+                    setCategoryMetadata(metadataMap);
                 }
             } catch (error) {
-                console.error('Error fetching portfolio images:', error);
+                console.error('Error fetching portfolio data:', error);
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchImages();
+        fetchPortfolioData();
     }, []);
 
-    return { images, loading };
+    return { images, categories, categoryMetadata, loading };
 }
