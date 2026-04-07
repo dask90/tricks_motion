@@ -14,7 +14,7 @@ export function Navigation() {
   const links = [
     { path: '/', label: 'Home' },
     { path: '/portfolio', label: 'Portfolio' },
-    { path: '/about', label: 'About' },
+    { path: '/about', label: 'About Us' },
     { path: '/contact', label: 'Contact' },
   ];
 

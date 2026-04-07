@@ -73,7 +73,7 @@ export function ContactPage() {
                 >
                     <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl mb-4 sm:mb-6">Get in Touch</h1>
                     <p className="text-muted-foreground text-sm sm:text-base lg:text-lg max-w-2xl mx-auto px-4">
-                        Let's create something beautiful together. I'd love to hear about your vision
+                        Let's create something beautiful together. We'd love to hear about your vision
                         and how we can bring it to life.
                     </p>
                 </motion.div>
@@ -90,7 +90,7 @@ export function ContactPage() {
                             <h2 className="text-2xl sm:text-3xl mb-6 sm:mb-8">Let's Connect</h2>
                             <p className="text-muted-foreground text-sm sm:text-base leading-relaxed mb-6 sm:mb-8">
                                 Whether you're planning a wedding, need professional portraits, or have a
-                                creative project in mind, I'm here to help bring your vision to life.
+                                creative project in mind, we're here to help bring your vision to life.
                             </p>
                         </div>
 
@@ -245,7 +245,7 @@ export function ContactPage() {
                                     required
                                     rows={6}
                                     className="w-full bg-input px-4 py-3 border border-border focus:border-foreground/40 transition-colors outline-none resize-none text-sm sm:text-base"
-                                    placeholder="Tell me about your vision..."
+                                    placeholder="Tell us about your vision..."
                                 />
                             </div>
 
@@ -272,7 +272,7 @@ export function ContactPage() {
                         </form>
 
                         <p className="text-xs sm:text-sm text-muted-foreground mt-4 sm:mt-6 text-center">
-                            I typically respond within 24-48 hours. For urgent inquiries, please call directly.
+                            We typically respond within 24-48 hours. For urgent inquiries, please call directly.
                         </p>
                     </motion.div>
                 </div>

@@ -115,11 +115,11 @@ export function LandingPage() {
                         className="grid md:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-center"
                     >
                         <div className="order-2 md:order-1">
-                            <h2 className="text-3xl sm:text-4xl lg:text-5xl mb-6 sm:mb-8">About My Work</h2>
+                            <h2 className="text-3xl sm:text-4xl lg:text-5xl mb-6 sm:mb-8">About Our Work</h2>
                             <p className="text-muted-foreground text-sm sm:text-base lg:text-lg mb-4 sm:mb-6 leading-relaxed">
-                                Photography is more than capturing images—it's about preserving emotions,
-                                telling stories, and creating timeless art. With over a decade of experience,
-                                I specialize in creating cinematic, emotive imagery that resonates.
+                                Photography is more than capturing images—it's about preserving emotions, 
+                                telling stories, and creating timeless art. As a collective, 
+                                we specialize in creating cinematic, emotive imagery that resonates.
                             </p>
                             <Link href="/about">
                                 <button className="flex items-center gap-2 hover:gap-4 transition-all group mt-6">

@@ -21,21 +21,21 @@ export function AboutPage() {
                         {aboutImage && (
                             <img
                                 src={aboutImage.url}
-                                alt="Photographer Portrait"
+                                alt="The Tricks Motion Collective"
                                 className="w-full h-full object-cover"
                             />
                         )}
                     </div>
                     <div className="order-1 md:order-2">
-                        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl mb-6 sm:mb-8">About Me</h1>
+                        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl mb-6 sm:mb-8">About Us</h1>
                         <p className="text-muted-foreground text-sm sm:text-base lg:text-lg leading-relaxed mb-4 sm:mb-6">
-                            I'm a visual storyteller based in California, dedicated to capturing the beauty
-                            and emotion in every frame. With over a decade of experience, I've had the privilege
-                            of documenting countless stories across weddings, portraits, and editorial work.
+                            We are a collective of visual storytellers based in Ghana, dedicated to capturing
+                            the beauty and emotion in every frame. With years of experience as a team, we've
+                            had the privilege of documenting countless stories across weddings, portraits, and editorial work.
                         </p>
                         <p className="text-muted-foreground text-sm sm:text-base lg:text-lg leading-relaxed">
-                            My approach combines technical precision with artistic vision, creating images
-                            that are both timeless and deeply personal.
+                            Our approach combines technical precision with artistic vision, creating images
+                            that are both timeless and deeply impactful.
                         </p>
                     </div>
                 </motion.div>
@@ -49,7 +49,7 @@ export function AboutPage() {
                     className="mb-20 sm:mb-28 lg:mb-32"
                 >
                     <div className="max-w-4xl mx-auto text-center">
-                        <h2 className="text-3xl sm:text-4xl lg:text-5xl mb-8 sm:mb-12">My Philosophy</h2>
+                        <h2 className="text-3xl sm:text-4xl lg:text-5xl mb-8 sm:mb-12">Our Philosophy</h2>
                         <div className="grid sm:grid-cols-3 gap-8 sm:gap-12">
                             <div>
                                 <h3 className="text-xl sm:text-2xl mb-3 sm:mb-4">Authenticity</h3>
