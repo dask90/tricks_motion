@@ -1,4 +1,6 @@
+export const dynamic = 'force-dynamic';
 import { CategoryLandingPage } from "@/app/pages/CategoryLandingPage";
+
 
 interface PageProps {
   params: Promise<{ category: string }>;
