@@ -6,7 +6,7 @@ export function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
         <div className="flex flex-col md:flex-row justify-between items-center gap-6 sm:gap-8">
           <div className="text-center md:text-left">
-            <div className="text-xl sm:text-2xl font-serif mb-2">Tricks Motion</div>
+            <div className="text-xl sm:text-2xl font-serif mb-2">NhyiraShots</div>
             <p className="text-muted-foreground text-xs sm:text-sm">
               Bringing your ideas to life through motion.
             </p>
@@ -32,7 +32,7 @@ export function Footer() {
               <Twitter className="size-5" />
             </a>
             <a
-              href="mailto:dasokwa90@gmail.com"
+              href="mailto:nhyirashots@gmail.com"
               className="hover:text-muted-foreground transition-colors"
               aria-label="Email"
             >
@@ -42,7 +42,7 @@ export function Footer() {
         </div>
 
         <div className="mt-6 sm:mt-8 pt-6 sm:pt-8 border-t border-border text-center text-xs sm:text-sm text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} Tricks Motion. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} NhyiraShots. All rights reserved.</p>
         </div>
       </div>
     </footer>

@@ -4,7 +4,8 @@ import Link from 'next/link';
 import { motion } from 'motion/react';
 import { ArrowRight } from 'lucide-react';
 import { usePortfolio } from '@/app/hooks/usePortfolio';
-import { HeroSlider } from '@/app/components/HeroSlider';
+import { HeroSection } from '@/app/components/HeroSection';
+// import { HeroSlider } from '@/app/components/HeroSlider'; // kept for reference by HeroSection swap
 
 export function LandingPage() {
     const { images } = usePortfolio();
@@ -19,9 +20,36 @@ export function LandingPage() {
     const aboutImages = images.filter(img => img.site_section === 'About Page');
     const displayAbout = aboutImages.length > 0 ? aboutImages[0] : null;
 
+    // Pick the first hero image for the new HeroSection background
+    const heroBackgroundImage = displayHero[0]?.url ?? '';
+
     return (
         <div className="min-h-screen">
-            {/* Hero Section */}
+            {/* ============================================================
+                NEW HERO — NhyiraShots split-layout hero with clip-path animation
+                To restore the original slider hero, uncomment the block below
+                and comment out <HeroSection … />.
+                ============================================================ */}
+            <section className="pt-16 sm:pt-20 min-h-[100svh] flex items-center">
+                <HeroSection
+                    className="min-h-[85svh] w-full"
+                    title={<>Capturing<br />Every Moment</>}
+                    subtitle="We are a collective of visual storytellers based in Ghana, dedicated to capturing the beauty and emotion in every frame — weddings, portraits, and editorial work."
+                    slogan="Photography & Visual Storytelling"
+                    callToAction={{ text: '→ View Our Portfolio', href: '/portfolio' }}
+                    backgroundImage={heroBackgroundImage}
+                    contactInfo={{
+                        website: 'nhyirashots@gmail.com',
+                        phone: '+233 (024) 849 8137',
+                        address: 'Kumasi, Ashanti Region',
+                    }}
+                />
+            </section>
+
+            {/* ============================================================
+                ORIGINAL HERO — Fullscreen slider with overlaid text & CTA
+                Uncomment this block and remove <HeroSection … /> above to restore.
+                ============================================================
             <section className="relative min-h-[100svh] flex items-center justify-center px-4">
                 <HeroSlider images={displayHero} />
 
@@ -53,6 +81,7 @@ export function LandingPage() {
                     </div>
                 </motion.div>
             </section>
+            ============================================================ */}
 
             {/* Featured Work Section */}
             <section className="py-16 sm:py-24 lg:py-32 px-4 sm:px-6">

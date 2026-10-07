@@ -102,10 +102,10 @@ export function ContactPage() {
                                         Email
                                     </div>
                                     <a
-                                        href="mailto:dasokwa90@gmail.com"
+                                        href="mailto:nhyirashots@gmail.com"
                                         className="text-sm sm:text-base hover:text-muted-foreground transition-colors break-all"
                                     >
-                                        dasokwa90@gmail.com
+                                        nhyirashots@gmail.com
                                     </a>
                                 </div>
                             </div>
@@ -116,12 +116,20 @@ export function ContactPage() {
                                     <div className="text-xs sm:text-sm text-muted-foreground mb-1 tracking-wider uppercase">
                                         Phone
                                     </div>
-                                    <a
-                                        href="tel:+2330593666780"
-                                        className="text-sm sm:text-base hover:text-muted-foreground transition-colors"
-                                    >
-                                        +233 (059) 366 6780
-                                    </a>
+                                    <div className="flex flex-col space-y-1">
+                                        <a
+                                            href="tel:+233248498137"
+                                            className="text-sm sm:text-base hover:text-muted-foreground transition-colors"
+                                        >
+                                            +233 (024) 849 8137
+                                        </a>
+                                        <a
+                                            href="tel:+233509639254"
+                                            className="text-sm sm:text-base hover:text-muted-foreground transition-colors"
+                                        >
+                                            +233 (050) 963 9254
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
 

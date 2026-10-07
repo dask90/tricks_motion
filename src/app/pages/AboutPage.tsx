@@ -21,7 +21,7 @@ export function AboutPage() {
                         {aboutImage && (
                             <img
                                 src={aboutImage.url}
-                                alt="The Tricks Motion Collective"
+                                alt="The NhyiraShots Collective"
                                 className="w-full h-full object-cover"
                             />
                         )}
@@ -73,40 +73,6 @@ export function AboutPage() {
                     </div>
                 </motion.div>
 
-                {/* Experience Section */}
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.8 }}
-                    className="mb-20 sm:mb-28 lg:mb-32 bg-secondary p-6 sm:p-12 lg:p-16"
-                >
-                    <h2 className="text-2xl sm:text-3xl lg:text-4xl mb-8 sm:mb-12">Experience & Recognition</h2>
-                    <div className="grid sm:grid-cols-2 gap-8">
-                        <div>
-                            <h3 className="text-base sm:text-lg lg:text-xl mb-4 text-muted-foreground tracking-wider uppercase">
-                                Selected Clients
-                            </h3>
-                            <ul className="space-y-2 text-sm sm:text-base lg:text-lg">
-                                <li>• Vogue Magazine</li>
-                                <li>• Harper's Bazaar</li>
-                                <li>• The New York Times</li>
-                                <li>• Various Private Clients</li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h3 className="text-base sm:text-lg lg:text-xl mb-4 text-muted-foreground tracking-wider uppercase">
-                                Awards & Features
-                            </h3>
-                            <ul className="space-y-2 text-sm sm:text-base lg:text-lg">
-                                <li>• WPJA Top 10 Photographer 2024</li>
-                                <li>• Featured in Rangefinder Magazine</li>
-                                <li>• PDN 30 Emerging Photographers</li>
-                                <li>• International Photography Awards</li>
-                            </ul>
-                        </div>
-                    </div>
-                </motion.div>
 
                 {/* Quote Section */}
                 <motion.div

@@ -5,7 +5,7 @@ import { Footer } from "@/app/components/Footer";
 import { ThemeProvider } from "@/app/providers";
 
 export const metadata: Metadata = {
-    title: "Tricks Motion",
+    title: "NhyiraShots",
     description: "Portfolio and motion design services",
 };
 
@@ -21,11 +21,11 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="en">
-            <body className="min-h-screen bg-background text-foreground antialiased">
+        <html lang="en" className="overflow-x-hidden">
+            <body className="min-h-screen overflow-x-hidden bg-background text-foreground antialiased">
                 <ThemeProvider
                     attribute="class"
-                    defaultTheme="system"
+                    defaultTheme="dark"
                     enableSystem
                     disableTransitionOnChange
                 >

@@ -55,8 +55,8 @@ export function usePortfolio() {
                     });
                     setCategoryMetadata(metadataMap);
                 }
-            } catch (error) {
-                console.error('Error fetching portfolio data:', error);
+            } catch (error: any) {
+                console.error('Error fetching portfolio data:', error?.message || error?.code || JSON.stringify(error) || error);
             } finally {
                 setLoading(false);
             }

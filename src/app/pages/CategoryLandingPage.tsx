@@ -40,7 +40,7 @@ export function CategoryLandingPage({ category }: CategoryLandingPageProps) {
 
   const handleNativeShare = () => {
     if (navigator.share) {
-      navigator.share({ title: `Tricks Motion — ${category}`, url: window.location.href });
+      navigator.share({ title: `NhyiraShots — ${category}`, url: window.location.href });
     }
   };
 
@@ -93,7 +93,7 @@ export function CategoryLandingPage({ category }: CategoryLandingPageProps) {
         {/* Top-Left Logo */}
         <div className="absolute top-8 left-8 sm:top-12 sm:left-12 z-20">
           <span className="text-xl sm:text-2xl font-serif tracking-widest text-white drop-shadow-md">
-            Tricks Motion
+            NhyiraShots
           </span>
         </div>
 
