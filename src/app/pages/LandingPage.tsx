@@ -36,13 +36,11 @@ export function LandingPage() {
                     title={<>Capturing<br />Every Moment</>}
                     subtitle="We are a collective of visual storytellers based in Ghana, dedicated to capturing the beauty and emotion in every frame — weddings, portraits, and editorial work."
                     slogan="Photography & Visual Storytelling"
-                    callToAction={{ text: '→ View Our Portfolio', href: '/portfolio' }}
-                    backgroundImage={heroBackgroundImage}
-                    contactInfo={{
-                        website: 'nhyirashots@gmail.com',
-                        phone: '+233 (024) 849 8137',
-                        address: 'Kumasi, Ashanti Region',
+                    callToAction={{
+                        primary: { text: 'View Our Work', href: '/portfolio' },
+                        secondary: { text: 'Book a Session', href: '/contact' },
                     }}
+                    backgroundImage={heroBackgroundImage}
                 />
             </section>
 
